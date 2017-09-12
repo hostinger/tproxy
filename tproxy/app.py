@@ -9,6 +9,7 @@ import logging
 from logging.config import fileConfig
 import os
 import sys
+import errno
 
 from gevent import core
 from gevent.hub import get_hub

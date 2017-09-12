@@ -57,10 +57,11 @@ class Worker(ProxyServer):
         return os.getpid()
 
     def init_process(self):
-        #gevent doesn't reinitialize dns for us after forking
-        #here's the workaround
-        gevent.core.dns_shutdown(fail_requests=1)
-        gevent.core.dns_init()
+        if gevent.version_info[0] == 0:
+            #gevent doesn't reinitialize dns for us after forking
+            #here's the workaround
+            gevent.core.dns_shutdown(fail_requests=1)
+            gevent.core.dns_init()
 
         util.set_owner_process(self.cfg.uid, self.cfg.gid)
 
@@ -102,14 +103,14 @@ class Worker(ProxyServer):
     def refresh_name(self):
         title = "worker"
         if self.name is not None:
-            title += " [%s]"
+            title += " [%s]" % (self.name,)
         title = "%s - handling %s connections" % (title, self.nb_connections)
         util._setproctitle(title)
 
     def stop_accepting(self):
         title = "worker"
         if self.name is not None:
-            title += " [%s]"
+            title += " [%s]" % (self.name,)
         title = "%s - stop accepting" % title
         util._setproctitle(title)
         super(Worker, self).stop_accepting()

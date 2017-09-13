@@ -8,7 +8,7 @@ import os
 import ssl
 
 import gevent
-from gevent import coros
+from gevent import lock
 from gevent import socket
 import greenlet
 
@@ -33,7 +33,7 @@ class ClientConnection(object):
         self.buf = []
         self.remote = None
         self.connected = False
-        self._lock = coros.Semaphore()
+        self._lock = lock.Semaphore()
 
     def handle(self):
         with self._lock:
